@@ -1,0 +1,56 @@
+{% extends 'registro/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Formulario de Registro</h2>
+
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        <ul>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <form method="post" class="row g-3">
+        {% csrf_token %}
+        
+        <div class="col-md-6">{{ form.numero_folio.label_tag }} {{ form.numero_folio }}</div>
+        <div class="col-md-6">{{ form.depcon.label_tag }} {{ form.depcon }}</div>
+
+        <div class="col-md-6">{{ form.calcon.label_tag }} {{ form.calcon }}</div>
+        <div class="col-md-6">{{ form.sercon.label_tag }} {{ form.sercon }}</div>
+
+        <div class="col-md-6">{{ form.fecha_solicitud.label_tag }} {{ form.fecha_solicitud }}</div>
+        <div class="col-md-6">{{ form.fecha_recibido.label_tag }} {{ form.fecha_recibido }}</div>
+
+        <div class="col-md-6">{{ form.columna1.label_tag }} {{ form.columna1 }}</div>
+        <div class="col-md-6">{{ form.departamento_a_canalizar.label_tag }} {{ form.departamento_a_canalizar }}</div>
+
+        <div class="col-md-6">{{ form.solicitante.label_tag }} {{ form.solicitante }}</div>
+        <div class="col-md-6">{{ form.telefono.label_tag }} {{ form.telefono }}</div>
+
+        <div class="col-md-6">{{ form.colonia_o_comunidad.label_tag }} {{ form.colonia_o_comunidad }}</div>
+        <div class="col-md-6">{{ form.domicilio.label_tag }} {{ form.domicilio }}</div>
+
+        <div class="col-md-6">{{ form.tipo_solicitud.label_tag }} {{ form.tipo_solicitud }}</div>
+        <div class="col-md-6">{{ form.fecha_atentida.label_tag }} {{ form.fecha_atentida }}</div>
+
+        <div class="col-md-6">{{ form.avance.label_tag }} {{ form.avance }}</div>
+        <div class="col-md-6">{{ form.observaciones.label_tag }} {{ form.observaciones }}</div>
+
+        <div class="col-md-6">{{ form.oficios.label_tag }} {{ form.oficios }}</div>
+        <div class="col-md-6">{{ form.columna3.label_tag }} {{ form.columna3 }}</div>
+
+        <div class="col-md-12">{{ form.columna4.label_tag }} {{ form.columna4 }}</div>
+
+        <div class="col-md-12">
+            <button type="submit" class="btn btn-success mt-3">Guardar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

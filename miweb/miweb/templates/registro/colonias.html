@@ -1,0 +1,77 @@
+{% extends 'registro/base.html' %}
+{% block content %}
+
+<h2 class="mt-5">Avance de solicitudes por colonia o comunidad</h2>
+
+<!-- Tabla de datos -->
+<table class="table table-bordered table-hover table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Colonia / Comunidad</th>
+            <th>Atendidas</th>
+            <th>En Proceso</th>
+            <th>Canceladas</th>
+            <th>Total</th>
+            <th>% Avance</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for dato in datos_colonias %}
+        <tr>
+            <td>{{ dato.colonia }}</td>
+            <td>{{ dato.atendidas }}</td>
+            <td>{{ dato.proceso }}</td>
+            <td>{{ dato.canceladas }}</td>
+            <td>{{ dato.total }}</td>
+            <td>{{ dato.porcentaje }}%</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot class="table-success fw-bold">
+        <tr>
+            <td>Total general</td>
+            <td>{{ total_atendidas }}</td>
+            <td>{{ total_proceso }}</td>
+            <td>{{ total_canceladas }}</td>
+            <td>{{ total_general }}</td>
+            <td>{{ porcentaje_general }}%</td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- Gráfica de barras -->
+<h3 class="mt-5">Porcentaje de avance por colonia o comunidad</h3>
+<canvas id="graficoColonias" width="600" height="300"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('graficoColonias').getContext('2d');
+    const datos = {
+        labels: {{ etiquetas|safe }},
+        datasets: [{
+            label: 'Porcentaje de avance',
+            data: {{ porcentajes|safe }},
+            backgroundColor: 'rgba(75, 192, 192, 0.7)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+        }]
+    };
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: datos,
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    });
+</script>
+
+<a href="{% url 'lista_registros' %}" class="btn btn-primary mt-4">Volver a lista de registros</a>
+
+{% endblock %}

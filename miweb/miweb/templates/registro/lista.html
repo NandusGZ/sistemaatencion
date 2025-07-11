@@ -1,0 +1,250 @@
+{% extends 'registro/base.html' %}
+
+{%block js%}
+<script type= "text/javascript">
+    $(document).ready(function(){
+        $('#filtrar').click(function (event){
+            event.preventDefault();
+            var formData = $('#formulario').serialize();
+
+            $.ajax({
+
+                type: 'POST',
+                url: "{% url 'lista_registros'%}",
+                data: formData,
+                dataType: 'html', 
+                success: function(data){
+                    
+                    $('#datos_registro').html(data);
+                    $('#filtro-form')[0].reset(); 
+
+                },
+                error: function(xhr, status, error){
+                    console.error(error);
+                }
+            });
+        });
+        $(' #numrto-items a').on('click', function(){
+            var items = parseInt(($(this).text()));
+
+        });
+    });
+
+
+</script>
+{%endblock%}
+
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Lista de Registros</h2>
+    <form id="filtro-form" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <input type="text" name="folio" class="form-control" placeholder="Buscar por Folio">
+        </div>
+        <div class="col-md-4">
+            <input type="text" name="solicitante" class="form-control" placeholder="Buscar por Solicitante">
+        </div>
+
+
+        <div class = "col-md-4">
+            <select name = "tipo_solicitud" class = "form-control">
+                <option value=""> -- Tipo de Solicitud --</option>
+                {% for value, label in tipo_solicitud_choices%}
+                    <option value = "{{ value}}" {% if request.GET.tipo_solicitud_choices == value %} selected {% endif%}>
+                        {{ label }}
+                    </option>
+                {% endfor%}
+
+            </select>
+            
+        </div>
+
+
+        <div class = "col-md-4">
+            <select name = "departamento" class = "form-control">
+                <option value=""> -- Departamento --</option>
+                {% for value, label in tipo_departamento_choices%}
+                    <option value = "{{ value}}" {% if request.GET.tipo_departamento_choices == value %} selected {% endif%}>
+                        {{ label }}
+                    </option>
+                {% endfor%}
+
+            </select>
+            
+        </div>
+        <div class = "col-md-4">
+            <select name = "colonia" class = "form-control">
+                <option value=""> -- Colonia o Comunidad --</option>
+                {% for value, label in tipo_colonia_choices%}
+                    <option value = "{{ value}}" {% if request.GET.tipo_colonia_choices == value %} selected {% endif%}>
+                        {{ label }}
+                    </option>
+                {% endfor%}
+
+            </select>
+            
+        </div>
+        <div class = "col-md-4">
+            <select name = "avance" class = "form-control">
+                <option value=""> -- Avance --</option>
+                {% for value, label in tipo_avance_choices%}
+                    <option value = "{{ value}}" {% if request.GET.tipo_avance_choices == value %} selected {% endif%}>
+                        {{ label }}
+                    </option>
+                {% endfor%}
+
+            </select>
+            
+        </div>
+
+
+
+
+
+        <div class="col-md-4">
+            <label for="fecha_inicio" class="form-label">Desde (fecha inicio)</label>
+            <input type="date" name="fecha_inicio" class="form-control" >
+        </div>
+        
+        <div class="col-md-4">
+            <label for="fecha_fin" class="form-label">Hasta (fecha fin)</label>
+            <input type="date" name="fecha_fin" class="form-control">
+        </div>
+
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </div>
+    </form>
+    <table class="table table-bordered table-hover table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Folio</th>
+                <th>DepCon</th>
+                <th>CalCon</th>
+                <th>SerCon</th>
+                <th>Fecha Solicitud</th>
+                <th>Fecha Recibido</th>
+                <th>Columna 1</th>
+                <th>Departamento Canalizado</th>
+                <th>Solicitante</th>
+                <th>Teléfono</th>
+                <th>Colonia</th>
+                <th>Domicilio</th>
+                <th>Tipo Solicitud</th>
+                <th>Fecha Atendida</th>
+                <th>Avance</th>
+                <th>Observaciones</th>
+                <th>Oficios</th>
+                <th>Columna 3</th>
+                <th>Columna 4</th>
+                <th>Registrado por</th>
+                <th>Acciones</th> 
+              
+            </tr>
+        </thead>
+        <tbody>
+            {% for registro in registros %}
+            <tr>
+                <td>{{ registro.numero_folio }}</td>
+                <td>{{ registro.depcon }}</td>
+                <td>{{ registro.calcon }}</td>
+                <td>{{ registro.sercon }}</td>
+                <td>{{ registro.fecha_solicitud }}</td>
+                <td>{{ registro.fecha_recibido }}</td>
+                <td>{{ registro.columna1 }}</td>
+                
+                <td>{{ registro.get_departamento_a_canalizar_display }}</td>
+
+                <td>{{ registro.solicitante }}</td>
+                <td>{{ registro.telefono }}</td>
+                <td>{{ registro.get_colonia_o_comunidad_display }}</td>
+                <td>{{ registro.domicilio }}</td>
+                <td>{{ registro.get_tipo_solicitud_display }}</td>
+                <td>{{ registro.fecha_atentida }}</td>
+                <td>
+                    {% if registro.avance == 'atendido' %}
+                      <span class="badge bg-success">{{ registro.get_avance_display }}</span>
+                    {% elif registro.avance == 'proceso' %}
+                      <span class="badge bg-warning text-dark">{{ registro.get_avance_display }}</span>
+                    {% elif registro.avance == 'cancelado' %}
+                      <span class="badge bg-danger">{{ registro.get_avance_display }}</span>
+                    {% else %}
+                      {{ registro.get_avance_display }}
+                    {% endif %}
+                  </td>
+                  
+
+                <td>{{ registro.observaciones }}</td>
+                <td>{{ registro.oficios }}</td>
+                <td>{{ registro.columna3 }}</td>
+                <td>{{ registro.columna4 }}</td>
+                <td>{{ registro.usuario.username }}</td>
+                <td>
+                    <div class="row">
+                        <div class="col">
+                          <a href="{% url 'editar_registro' registro.id %}" class="btn btn-info w-100">Editar</a>
+                        
+                        </div>
+                        <div class="col">
+                            <a href="{% url 'eliminar_registro' registro.id %}" class="btn btn-danger w-100" onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?');">Eliminar</a>
+                          
+                        </div>
+                      </div>
+
+
+
+
+                   
+                    
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody id = "datos_registro">
+    </table>
+
+
+    
+    <a href="{% url 'registro' %}" class="btn btn-primary mt-3">Agregar nuevo registro</a>
+    <a href = "{% url 'graficas_avance'%}" class= "btn btn-info mt-3"> Graficas Departamentos</a>
+    <a href = "{% url 'tabla_colonias'%}" class= "btn btn-info mt-3"> Graficas Colonias</a>
+    <a href = "{% url 'tabla_conceptos'%}" class= "btn btn-info mt-3"> Graficas Conceptos</a>
+    <a href="{% url 'exportar_pdf' %}?{{ request.GET.urlencode }}" class="btn btn-danger mt-3">Exportar a PDF</a>
+
+
+    
+    
+    {% block paginacion %} 
+    
+    <nav aria-label = "Page navigation example">
+        <ul class = "pagination justify-content-center">
+            {% if registros.has_previous %}
+                <li class = "page-item"> <a class = "page-link" href="?page=1">
+                &laquo; Primera</a></li>
+
+                <li class = "page-item">
+                <a class= "page-link" href="?page={{ registros.previous_page_number }}">Anterior</a></li>
+            {% endif %}
+
+
+            
+            {#<li class = "page-item disabled"><a href ="#" class="page-link">Página {{ productos.number }} de {{ productos.paginator.num_pages }}</a></li>#}
+                
+            {% for i in nums %}
+                    <li class = "page-item"><a class ="page-link" 
+                        href="?page={{ forloop.counter}}">{{ forloop.counter}}</a></li>
+
+            {% endfor%}
+            {% if registros.has_next %}
+                <li class = "page-item">
+                <a class= "page-link" href="?page={{ registros.next_page_number }}">Siguiente</a></li>
+                <li class = "page-item">
+                <a class= "page-link" href="?page={{ registros.paginator.num_pages }}">Última &raquo;</a></li>
+            {% endif %}
+    
+        </ul>
+    </nav>
+            
+    {%endblock%}
+</div>
+{% endblock %}
